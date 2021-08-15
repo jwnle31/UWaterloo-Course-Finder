@@ -6,9 +6,8 @@ export async function searchCourseUW(termCode, subject, catalogNumber) {
 }
 
 export async function searchRedditUW(searchTerm, searchLimit, sortBy) {
-    return await fetch(`https://www.reddit.com/r/uwaterloo/search.json?q=${searchTerm}&sort=${sortBy}&limit=${searchLimit}&&restrict_sr=on`) //, { mode: 'cors' }
+    return await fetch(`./reddit?url=https://www.reddit.com/r/uwaterloo/search.json&q=${searchTerm}&sort=${sortBy}&limit=${searchLimit}`)
     .then(res => res.json())
-    .then(data => data.data.children.map(data => data.data))
     .catch(err => console.log(err));
 }
 
