@@ -2,14 +2,6 @@ import * as fetchdata from './fetchdata.js';
 
 window.onload = () => document.getElementById('submit-btn').disabled=false;
 
-fetch(`https://openapi.data.uwaterloo.ca/v3/Courses/1215/CS/246`, {
-        headers: {
-            'x-api-key': '2B93D6D4729D4A1493B03F0E0FB6EFAE'
-        }
-    })
-    .then(res => res.json())
-    .catch(err => console.log(err));
-
 const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
 const loadSpinner = `
