@@ -1,0 +1,177 @@
+body {
+    background-color: #FFF2CC;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 450;
+    background-image: linear-gradient(to bottom, #FFF2CC, #fff);
+    min-width: 320px;
+}
+   
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 450;
+}
+
+.navbar {
+    background-color: #FFD54F;
+    background-image: linear-gradient(to top right, #FFD54F, #ffffaa);
+}
+
+.navbar-light .navbar-brand,
+.navbar-light .navbar-brand:hover, 
+.navbar-light .navbar-brand:focus {
+  color: #646464;
+}
+
+.uw {
+    color: #000;
+}
+
+#search-container span {
+    margin: 0 3px;
+}
+
+#search-container .btn[type="submit"]:hover {
+    color: #FFD54F;
+}
+
+#search-input, #link-container {
+    border-color: #FFD54F;
+    border-width: 5px;
+}
+
+#link-container {
+    border-radius: 40px;
+}
+
+#link-container a {
+    position: relative;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+#link-container a:hover::before {
+    transform: scaleX(1);
+}
+
+/* Animate the line from the left */
+#link-container a::before {
+    content: "";
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 3px;
+    bottom: 0;
+    left: 0;
+    background-color: #FFD54F;
+    transform: scaleX(0);
+    transform-origin: top left;
+    transition: transform 0.3s ease;
+}
+
+#course, #spec, #reddit, #req, #stat, #review {
+    opacity: 1;
+    animation: fadein 1s;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+#course, #spec, .review-card {
+    background-color:rgba(255, 255, 170, 0.6);
+    transition: transform 0.2s;
+}
+
+#course:hover, #spec:hover, .review-card:hover {
+    transform: scale(1.05);
+}
+
+#reddit, #review {
+    background-color:rgba(240, 240, 240, 0.6);
+}
+
+.card-img-top {
+    border: 3px solid rgba(240, 240, 240, 0.6);
+}
+
+#stat {
+    background-color: #fff;
+}
+
+.progress-bar {
+    background-color: #0052cc;
+}
+
+#req {
+    background-color: rgb(255, 255, 221, 0.8);
+}
+
+.bi-reddit {
+    color: #ff4500;
+}
+
+.bi-book {
+    color: #000;
+    transition: color 0.3s ease;
+}
+
+.bi-book:hover {
+    color: #87ceeb;
+}
+
+.bi-caret-up-fill {
+    color: #ff4500;
+}
+
+.bi-record-circle {
+    color: #0052cc
+}
+
+#posts {
+    height: 1000px;
+    overflow-y: auto;
+}
+
+.review-info {
+    color: #787878;
+}
+
+footer {
+    padding: 36px;
+}
+
+.bi-chevron-double-up {
+    color: #000;
+}
+
+footer .container {
+    color: #fff;
+    transition: color 1s ease;
+}
+
+footer:hover .container {
+    color: #FFD54F;
+}
+
+#nf-notif {
+    animation: shake 0.5s;
+}
+
+#nf-text {
+    font-size: 80px;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+}

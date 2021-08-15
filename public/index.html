@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UW Course Finder</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:300,500" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <nav class="navbar navbar-light mb-3">
+        <div class="container">
+            <span class="navbar-brand fs-2 mb-0 text-wrap"><b class="uw">UW</b><b>aterloo Course&nbsp;Finder</b></span>
+        </div>
+        <div class="container">
+            <p>Delve into thousands of courses in University of Waterloo.<br>Just enter the appropriate course name, and press Search!</p>
+        </div>
+    </nav>
+    <div id="search-container" class="container">
+        <div id="search" class="card card-body border-0 bg-light mb-2 shadow-lg">
+            <div class="row">
+                <div class="col-lg-7">
+                    <h4 class="text-center mb-3"><b>Search Query</b></h4>
+                    <form id="search-form" class="input-group mt-2 mb-4">
+                        <input type="text" id="search-input" class="form-control form-control-lg rounded" placeholder="Search...">
+                        <span></span>
+                        <button id="submit-btn" type="submit" class="btn border-0 rounded"><h3 class="mb-0"><i class="bi-search"></i></h3></button>
+                    </form>
+                </div>
+                <div class="col-lg-5 text-center">
+                    <h4 class="mb-3"><b>Useful Links</b></h4>
+                    <div id="link-container" class="card">
+                        <div class="card-body">
+                            <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 g-1">
+                                <div class="col">
+                                    <a href="https://uwaterloo.ca/" class="useful-link link-dark" target="_blank"><b>UW Website</b></a>
+                                </div>
+                                <div class="col">
+                                    <a href="https://uwaterloo.ca/quest/" class="useful-link link-dark" target="_blank"><b>Quest</b></a>
+                                </div>
+                                <div class="col">
+                                    <a href="https://www.reddit.com/r/uwaterloo/" class="useful-link link-dark" target="_blank"><b>UW Subreddit</b></a>
+                                </div>
+                                <div class="col">
+                                    <a href="https://cs.uwaterloo.ca/cscf/teaching/schedule/expert" class="useful-link link-dark" target="_blank"><b>UW Schedule</b></a>
+                                </div>
+                                <div class="col">
+                                    <a href="https://ugradcalendar.uwaterloo.ca/page/uWaterloo-Undergraduate-Calendar-Access" class="useful-link link-dark" target="_blank"><b>UG Calendar</b></a>
+                                </div>
+                                <div class="col">
+                                    <a href="https://uwflow.com/" class="useful-link link-dark" target="_blank"><b>UW Flow</b></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mb-5">
+        <div class="row row-cols-10 mb-3">
+            <div class="col-lg-7 my-3">
+                <div id="container-l" class="container px-1"></div>
+                <div id="container-lb" class="container px-1"></div>
+            </div>
+            <div class="col-lg-5 my-3">
+                <div id="container-r" class="container px-1"></div>
+                <div id="container-rb" class="container px-1"></div>
+            </div>
+        </div>
+        <div class="row row-cols-10">
+            <div id="container-b" class="container"></div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-center mt-auto mb-3">
+        <a href="#" class="justify-self-center">
+            <i class="bi-chevron-double-up h1"></i>
+        </a>
+    </div>
+    <footer class="bg-dark text-white text-center">
+        <div class="container">
+            <i class="bi-github h1"></i>
+            <br>
+            <p class="m-0">Built By Jowoon Lee</p>
+        </div>
+    </footer>
+    <script type="module" src="./index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
