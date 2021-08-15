@@ -2,6 +2,14 @@ import * as fetchdata from './fetchdata.js';
 
 window.onload = () => document.getElementById('submit-btn').disabled=false;
 
+fetch(`https://openapi.data.uwaterloo.ca/v3/Courses/1215/CS/246`, {
+        headers: {
+            'x-api-key': '2B93D6D4729D4A1493B03F0E0FB6EFAE'
+        }
+    })
+    .then(res => res.json())
+    .catch(err => console.log(err));
+
 const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
 const loadSpinner = `
@@ -34,6 +42,7 @@ searchForm.addEventListener('submit', async e => {
     const monthDigit = Math.floor((month - 1) / 4) * 4 + 1;
 
     const courseData = await fetchdata.searchCourseUW('1' + yearDigits + monthDigit, subject, catalogNumber);
+    console.log(courseData);
     if (courseData === undefined) {
         courseInvalid();
         return;
@@ -61,6 +70,7 @@ searchForm.addEventListener('submit', async e => {
     `;
 
     const redditData = await fetchdata.searchRedditUW(`(${subject}${catalogNumber}) OR (${subject} ${catalogNumber})`, 100, 'relevance');
+    console.log(redditData);
 
     let outputReddit = `
     <div id="reddit" class="card card-body mb-4 border-0 shadow-lg">
@@ -100,6 +110,7 @@ searchForm.addEventListener('submit', async e => {
     document.getElementById('container-r').innerHTML = outputReddit;
 
     const flowData = await fetchdata.searchFlowUW(`${subject}${catalogNumber}`)
+    console.log(flowData);
     document.getElementById('container-lb').innerHTML =  `
     <div id="req" class="card card-body border-0 mb-2 shadow-lg">
         <h4><b>Prerequisites:</b></h4>
