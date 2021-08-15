@@ -146,7 +146,6 @@ footer {
 
 footer .container {
     color: #fff;
-    transition: color 1s ease;
 }
 
 footer:hover .container {
