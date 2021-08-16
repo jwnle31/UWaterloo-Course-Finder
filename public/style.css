@@ -159,7 +159,6 @@ footer:hover .container {
 
 #nf-text {
     font-size: 80px;
-    animation: shake 0.5s;
 }
 
 @keyframes shake {
