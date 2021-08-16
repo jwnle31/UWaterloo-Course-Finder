@@ -94,14 +94,6 @@ h1, h2, h3, h4, h5, h6 {
     border: 3px solid rgba(240, 240, 240, 0.6);
 }
 
-#stat {
-    background-color: #fff;
-}
-
-.progress-bar {
-    background-color: #0052cc;
-}
-
 #req {
     background-color: rgb(255, 255, 221, 0.8);
 }
@@ -123,13 +115,21 @@ h1, h2, h3, h4, h5, h6 {
     color: #ff4500;
 }
 
-.bi-record-circle {
-    color: #0052cc
-}
-
 #posts {
     height: 1000px;
     overflow-y: auto;
+}
+
+#stat {
+    background-color: #fff;
+}
+
+.progress-bar {
+    background-color: #0052cc;
+}
+
+.bi-record-circle {
+    color: #0052cc
 }
 
 .review-info {
@@ -146,6 +146,7 @@ footer {
 
 footer .container {
     color: #fff;
+    transition: ease 0.5s;
 }
 
 footer:hover .container {

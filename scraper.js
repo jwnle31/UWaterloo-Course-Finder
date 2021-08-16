@@ -1,7 +1,9 @@
 const puppeteer = require('puppeteer');
 
+// Scrape UW Flow Course Page
 async function scrapeCourseInfo(url) {
     const browser = await puppeteer.launch({
+        // Prevent Memory Runout on Heroku
         'args': [
             '--no-sandbox',
             '--disable-setuid-sandbox',
@@ -9,8 +11,8 @@ async function scrapeCourseInfo(url) {
             '--single-process' 
         ]
     });
-    const page = await browser.newPage();
 
+    const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'networkidle2' });
 
     const scrapedData = await page.evaluate(() => {

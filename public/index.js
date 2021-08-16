@@ -11,6 +11,7 @@ const loadSpinner = `
         </div>
     </div>`;
 
+// Event Listener for Search Button
 searchForm.addEventListener('submit', async e => {
     e.preventDefault();
     document.getElementById('submit-btn').disabled = true;
@@ -18,6 +19,7 @@ searchForm.addEventListener('submit', async e => {
     let searchTermArr = searchTerm.replace(/\s/g, '');
     searchInput.value = '';
 
+    // Input Validation
     if (/([a-zA-Z]+)([0-9]+[a-zA-Z]{0,1})/.test(searchTermArr)) {
         searchTermArr = searchTermArr.match(/[a-zA-Z]+|[0-9]+[a-zA-Z]{0,1}/g);
     } else {
@@ -25,23 +27,28 @@ searchForm.addEventListener('submit', async e => {
         return;
     }
 
+    // Input Partition
     const subject = searchTermArr[0].toUpperCase();
     const catalogNumber = searchTermArr[1].toUpperCase();
     
+    // Calculate for UWaterloo Term Code
     const currentTime = new Date();
     const yearDigits = currentTime.getFullYear().toString().substr(-2);
     const month = currentTime.getMonth();
     const monthDigit = Math.floor((month - 1) / 4) * 4 + 1;
 
+    // Grab Course Data from API
     const courseData = await fetchdata.searchCourseUW('1' + yearDigits + monthDigit, subject, catalogNumber);
-    console.log(courseData);
+
     if (courseData === undefined) {
         courseInvalid();
         return;
     }
 
+    // Put Load Spinners Before the Main Content
     reset(loadSpinner);
 
+    // Main Course Content
     document.getElementById('container-l').innerHTML =  `
     <div id="course" class="card card-body border-0 mb-4 shadow-lg">
         <h2><b>${subject} ${catalogNumber}</b></h2>
@@ -61,9 +68,10 @@ searchForm.addEventListener('submit', async e => {
     </div>
     `;
 
+    // Grab UWaterloo Subreddit Data from API
     const redditData = await fetchdata.searchRedditUW(`(${subject}${catalogNumber}) OR (${subject} ${catalogNumber})`, 100, 'relevance');
-    console.log(redditData);
 
+    // Subreddit Posts Content
     let outputReddit = `
     <div id="reddit" class="card card-body mb-4 border-0 shadow-lg">
         <h2><b><i class="bi-reddit"></i> Reddit Posts</b></h2>
@@ -79,6 +87,7 @@ searchForm.addEventListener('submit', async e => {
     }
 
     redditData.forEach(post => {
+        // Integrate Preview Image
         const imageHTML = post.url.includes('.png') || post.url.includes('.jpg') || post.url.includes('.gif') || post.url.includes('.gifv') ? `<img src="${post.url}" class="card-img-top" alt="...">` : '';
 
         outputReddit += `
@@ -96,13 +105,16 @@ searchForm.addEventListener('submit', async e => {
         </div>
         `;
     });
+
     outputReddit += `
         </div>
     </div>`;
     document.getElementById('container-r').innerHTML = outputReddit;
 
+    // Grab UW Flow Data from API
     const flowData = await fetchdata.searchFlowUW(`${subject}${catalogNumber}`)
-    console.log(flowData);
+
+    // UW Flow Statistics & Review
     document.getElementById('container-lb').innerHTML =  `
     <div id="req" class="card card-body border-0 mb-2 shadow-lg">
         <h4><b>Prerequisites:</b></h4>
@@ -115,9 +127,11 @@ searchForm.addEventListener('submit', async e => {
         <p>${flowData.relCourseArr[3]}</p>
     </div>
     `;
+
     if (flowData.likedPerc === 'N/A') flowData.likedPerc = '0%';
     if (flowData.easyPerc === 'N/A') flowData.easyPerc = '0%';
     if (flowData.usefulPerc === 'N/A') flowData.usefulPerc = '0%';
+
     document.getElementById('container-rb').innerHTML = `
     <div id="stat" class="card card-body border-0 text-center mb-2 shadow-lg">
         <h4><b>Review Statistics:</b></h4>
@@ -156,6 +170,7 @@ searchForm.addEventListener('submit', async e => {
             </div>
         </div>
     `;
+
     let outputFlow = `
     <div id="review" class="card card-body border-0 mb-2 shadow-lg">
         <h4><b>Recent Course Reviews:</b></h4>
@@ -176,10 +191,12 @@ searchForm.addEventListener('submit', async e => {
             <b><i class="review-info">${flowData.postInfoArr[i]}</i></b>
         </div>`;
     }
+
     outputFlow += '</div>';
     document.getElementById('container-b').innerHTML = outputFlow;
     document.getElementById('posts').style.height = `${document.getElementById('container-l').offsetHeight + document.getElementById('container-lb').offsetHeight - 357}px`;
     
+    // Enable the Search Button Once All the Components Load
     document.getElementById('submit-btn').disabled = false;
 });
 
@@ -189,6 +206,7 @@ function truncateText(text, limit) {
     return text.substring(0, shortened) + ' ...';
 }
 
+// Resets All the Grid Components to a Certain HTML Element
 function reset(item) {
     document.getElementById('container-l').innerHTML = item;
     document.getElementById('container-r').innerHTML = item;
@@ -197,6 +215,7 @@ function reset(item) {
     document.getElementById('container-b').innerHTML = item;
 }
 
+// Not Found Display
 function courseInvalid() {
     reset('');
     document.getElementById('container-b').innerHTML = '<h1 id="nf-notif" class="text-center">Course Not Found</h1>';
