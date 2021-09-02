@@ -1,5 +1,3 @@
-import * as fetchdata from './fetchdata.js';
-
 window.onload = () => document.getElementById('submit-btn').disabled=false;
 
 const searchForm = document.getElementById('search-form');
@@ -30,17 +28,13 @@ searchForm.addEventListener('submit', async e => {
     // Input Partition
     const subject = searchTermArr[0].toUpperCase();
     const catalogNumber = searchTermArr[1].toUpperCase();
-    
-    // Calculate for UWaterloo Term Code
-    const currentTime = new Date();
-    const yearDigits = currentTime.getFullYear().toString().substr(-2);
-    const month = currentTime.getMonth();
-    const monthDigit = Math.floor((month - 1) / 4) * 4 + 1;
+    const courseCode = `${subject}${catalogNumber}`;
 
     // Grab Course Data from API
-    const courseData = await fetchdata.searchCourseUW('1' + yearDigits + monthDigit, subject, catalogNumber);
+    let courseData = await fetch(`./uwinfo/${courseCode}`);
+    courseData = await courseData.json();
 
-    if (courseData === undefined) {
+    if (!courseData) {
         courseInvalid();
         return;
     }
@@ -69,7 +63,17 @@ searchForm.addEventListener('submit', async e => {
     `;
 
     // Grab UWaterloo Subreddit Data from API
-    const redditData = await fetchdata.searchRedditUW(`(${subject}${catalogNumber}) OR (${subject} ${catalogNumber})`, 100, 'relevance');
+    let redditData = await fetch(`./reddit/${courseCode}`);
+    redditData = await redditData.json();
+
+    let currDate = new Date().getTime();
+    if (!redditData || redditData.timestamp + (1000 * 60 * 60 * 24 * 7) < currDate) {
+        await fetch(`./reddit/${subject}/${catalogNumber}`, { method: 'PUT' });
+        redditData = await fetch(`./reddit/${courseCode}`);
+        redditData = await redditData.json();
+    }
+
+    redditData = redditData.posts;
 
     // Subreddit Posts Content
     let outputReddit = `
@@ -112,7 +116,17 @@ searchForm.addEventListener('submit', async e => {
     document.getElementById('container-r').innerHTML = outputReddit;
 
     // Grab UW Flow Data from API
-    const flowData = await fetchdata.searchFlowUW(`${subject}${catalogNumber}`)
+    let flowData = await fetch(`./uwflow/${courseCode}`);
+    flowData = await flowData.json();
+
+    currDate = new Date().getTime();
+    if (!flowData || flowData.timestamp + (1000 * 60 * 60 * 24 * 7) < currDate) {
+        await fetch(`./uwflow/${courseCode}`, { method: 'PUT' });
+        flowData = await fetch(`./uwflow/${courseCode}`);
+        flowData = await flowData.json();
+    }
+
+    flowData = flowData.data;
 
     // UW Flow Statistics & Review
     document.getElementById('container-lb').innerHTML =  `

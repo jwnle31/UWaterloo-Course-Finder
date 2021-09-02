@@ -1,7 +1,7 @@
 {
   "name": "uw_course_search_app",
   "version": "1.0.0",
-  "description": "app for quickly searching course data from various sources",
+  "description": "A web app for quickly searching course data from various sources",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,8 +9,10 @@
   "author": "jwnle31",
   "license": "MIT",
   "dependencies": {
+    "bottleneck": "^2.19.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "mongodb": "^4.1.1",
     "node-fetch": "^2.6.1",
     "puppeteer": "^10.2.0"
   }

@@ -1,9 +1,27 @@
 const express = require('express');
 const path = require('path');
-const uwapi = require('./uwapi.js');
-const fetch = require('node-fetch');
-const scraper = require('./scraper');
+const reddit = require('./api/reddit');
+const scraper = require('./api/scraper');
 require('dotenv').config();
+
+// Connect to database
+const { MongoClient } = require('mongodb');
+const uri = process.env.MONGODB_URI;
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const connect = client.connect();
+
+// Assign collections
+const db = client.db('CourseDB');
+const courses = db.collection('courses');
+const redditPosts = db.collection('reddit-posts');
+const uwflowData = db.collection('uwflow-data');
+
+async function validCourse(course) {
+    const validCourse = await courses.findOne({ courseCode: course });
+    return Boolean(validCourse);
+}
+
+// setInterval(db.run, 5000);
 
 const app = express();
 
@@ -15,39 +33,130 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-// Access Waterloo OpenData API
-app.get('/uwinfo', async (req, res) => {
-    const uwInfo = await uwapi.searchCourse(req.query.code, req.query.subject, req.query.number);
-    
-    res.writeHead(200, {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=86400'
-    });
-    res.end(JSON.stringify(uwInfo));
+app.get('/uwinfo/:course', (req, res) => {
+    connect
+        .then(res => {
+            return courses.findOne({ courseCode: req.params.course });
+        })
+        .then(data => {
+            res.status(200).json(data);
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ error: err });
+        });
 });
 
 // Access Reddit API
-app.get('/reddit', async (req, res) => {
-    const redditInfo = await fetch(`${req.query.url}?q=${req.query.q}&sort=${req.query.sort}&limit=${req.query.limit}&restrict_sr=on`)
-        .then(res => res.json())
-        .then(data => data.data.children.map(data => data.data));
+app.get('/reddit/:course', (req, res) => {
+    connect
+        .then(res => {
+            return redditPosts.findOne({ courseCode: req.params.course });
+        })
+        .then(data => {
+            res.status(200).json(data);
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ error: err });
+        });
+});
 
-    res.writeHead(200, {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=86400'
-    });
-    res.end(JSON.stringify(redditInfo));
+app.put('/reddit/:subject/:catalogNum', (req, res) => {
+    const subject = req.params.subject;
+    const catNum = req.params.catalogNum;
+
+    validCourse(`${subject}${catNum}`)
+        .then(isValid => {
+            if (isValid) {
+                return connect;
+            } else {
+                throw {
+                    status: 400, 
+                    message: 'Bad Request: Enter a valid query!'
+                };
+            }
+        })
+        .then(res => {
+            return reddit.searchRedditUW(`(${subject}${catNum}) OR (${subject} ${catNum})`, 100, 'relevance');
+        })
+        .then(postData => {
+            postObj = {
+                posts: postData,
+                courseCode: `${subject}${catNum}`,
+                timestamp: Date.now()
+            }
+            return redditPosts.replaceOne({ courseCode: `${subject}${catNum}` }, postObj, { upsert: true });
+        })
+        .then(data => {
+            res.status(201).json({
+                message: 'Successfully updated Reddit posts!',
+                result: data
+            });
+        })
+        .catch(err => {
+            const status = err.status || 500;
+            if (status == 500) err.message = 'Server Error!';
+            res.status(status).json({
+                status,
+                message: err.message
+            });
+        });
 });
 
 // Access UW Flow Scraper
-app.get('/courseinfo', async (req, res) => {
-    const courseInfo = await scraper.scrapeCourseInfo(req.query.url);
+app.get('/uwflow/:course', (req, res) => {
+    connect
+        .then(res => {
+            return uwflowData.findOne({ courseCode: req.params.course });
+        })
+        .then(data => {
+            res.status(200).json(data);
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({ error: err });
+        });
+});
 
-    res.writeHead(200, {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=86400'
-    });
-    res.end(JSON.stringify(courseInfo));
+app.put('/uwflow/:course', (req, res) => {
+    const course = req.params.course;
+    validCourse(course)
+        .then(isValid => {
+            if (isValid) {
+                return connect;
+            } else {
+                throw {
+                    status: 400, 
+                    message: 'Bad Request: Enter a valid query!'
+                };
+            }
+        })
+        .then(res => {
+            return scraper.scrapeCourseInfo(`https://uwflow.com/course/${course}`);
+        })
+        .then(data => {
+            flowDataObj = {
+                data,
+                courseCode: course,
+                timestamp: Date.now()
+            }
+            return uwflowData.replaceOne({ courseCode: course }, flowDataObj, { upsert: true });
+        })
+        .then(data => {
+            res.status(201).json({
+                message: 'Successfully updated UW Flow data!',
+                result: data
+            });
+        })
+        .catch(err => {
+            const status = err.status || 500;
+            if (status == 500) err.message = 'Server Error!';
+            res.status(status).json({
+                status,
+                message: err.message
+            });
+        });
 });
 
 // 404 Page

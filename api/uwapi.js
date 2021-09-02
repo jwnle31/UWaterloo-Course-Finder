@@ -1,8 +1,8 @@
 const fetch = require('node-fetch');
 
 // Fetch Current Official Course Data
-async function searchCourse(termCode, subject, catalogNumber) {
-    return await fetch(`https://openapi.data.uwaterloo.ca/v3/Courses/${termCode}/${subject}/${catalogNumber}`, {
+async function fetchCourse(termCode) {
+    return await fetch(`https://openapi.data.uwaterloo.ca/v3/Courses/${termCode}`, {
         headers: {
             'x-api-key': process.env.UW_API_KEY
         }
@@ -11,4 +11,4 @@ async function searchCourse(termCode, subject, catalogNumber) {
         .catch(err => console.log(err));
 }
 
-module.exports = { searchCourse };
+module.exports = { fetchCourse };
