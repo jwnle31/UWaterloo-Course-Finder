@@ -1,14 +1,15 @@
 const express = require('express');
 const path = require('path');
 const reddit = require('./api/reddit');
-const scraper = require('./api/scraper');
+const uwflow = require('./api/uwflow');
+const dbupdate = require('./dbupdate');
 require('dotenv').config();
 
 // Connect to database
 const { MongoClient } = require('mongodb');
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-const connect = client.connect();
+client.connect();
 
 // Assign collections
 const db = client.db('CourseDB');
@@ -21,12 +22,12 @@ async function validCourse(course) {
     return Boolean(validCourse);
 }
 
-// setInterval(db.run, 5000);
-
 const app = express();
 
 // Set a Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Homepage Route
 app.get('/', (req, res) => {
@@ -34,10 +35,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/uwinfo/:course', (req, res) => {
-    connect
-        .then(res => {
-            return courses.findOne({ courseCode: req.params.course });
-        })
+    courses.findOne({ courseCode: req.params.course })
         .then(data => {
             res.status(200).json(data);
         })
@@ -47,12 +45,9 @@ app.get('/uwinfo/:course', (req, res) => {
         });
 });
 
-// Access Reddit API
+// Access Reddit Info
 app.get('/reddit/:course', (req, res) => {
-    connect
-        .then(res => {
-            return redditPosts.findOne({ courseCode: req.params.course });
-        })
+    redditPosts.findOne({ courseCode: req.params.course })
         .then(data => {
             res.status(200).json(data);
         })
@@ -69,7 +64,7 @@ app.put('/reddit/:subject/:catalogNum', (req, res) => {
     validCourse(`${subject}${catNum}`)
         .then(isValid => {
             if (isValid) {
-                return connect;
+                return;
             } else {
                 throw {
                     status: 400, 
@@ -104,12 +99,9 @@ app.put('/reddit/:subject/:catalogNum', (req, res) => {
         });
 });
 
-// Access UW Flow Scraper
+// Access UW Flow Info
 app.get('/uwflow/:course', (req, res) => {
-    connect
-        .then(res => {
-            return uwflowData.findOne({ courseCode: req.params.course });
-        })
+    uwflowData.findOne({ courseCode: req.params.course })
         .then(data => {
             res.status(200).json(data);
         })
@@ -124,7 +116,7 @@ app.put('/uwflow/:course', (req, res) => {
     validCourse(course)
         .then(isValid => {
             if (isValid) {
-                return connect;
+                return;
             } else {
                 throw {
                     status: 400, 
@@ -133,15 +125,10 @@ app.put('/uwflow/:course', (req, res) => {
             }
         })
         .then(res => {
-            return scraper.scrapeCourseInfo(`https://uwflow.com/course/${course}`);
+            return uwflowData.findOne({ courseCode: req.params.course });
         })
         .then(data => {
-            flowDataObj = {
-                data,
-                courseCode: course,
-                timestamp: Date.now()
-            }
-            return uwflowData.replaceOne({ courseCode: course }, flowDataObj, { upsert: true });
+            return uwflow.reviewDataUpdate(data.courseId);
         })
         .then(data => {
             res.status(201).json({

@@ -66,6 +66,7 @@ searchForm.addEventListener('submit', async e => {
     let redditData = await fetch(`./reddit/${courseCode}`);
     redditData = await redditData.json();
 
+    // Insert Reddit data if null or if a week has passed
     let currDate = new Date().getTime();
     if (!redditData || redditData.timestamp + (1000 * 60 * 60 * 24 * 7) < currDate) {
         await fetch(`./reddit/${subject}/${catalogNumber}`, { method: 'PUT' });
@@ -119,14 +120,20 @@ searchForm.addEventListener('submit', async e => {
     let flowData = await fetch(`./uwflow/${courseCode}`);
     flowData = await flowData.json();
 
+    // Insert Reddit data if null or if a day has passed
     currDate = new Date().getTime();
-    if (!flowData || flowData.timestamp + (1000 * 60 * 60 * 24 * 7) < currDate) {
+    if (!flowData || !flowData.reviewInfo || flowData.reviewInfo.timestamp + (1000 * 60 * 60 * 24) < currDate) {
         await fetch(`./uwflow/${courseCode}`, { method: 'PUT' });
         flowData = await fetch(`./uwflow/${courseCode}`);
         flowData = await flowData.json();
     }
 
-    flowData = flowData.data;
+    let postReqs = '';
+    if (Array.isArray(flowData.relCourseArr[3])) {
+        postReqs = flowData.relCourseArr[3].join('<br>');
+    } else {
+        postReqs = flowData.relCourseArr[3];
+    }
 
     // UW Flow Statistics & Review
     document.getElementById('container-lb').innerHTML =  `
@@ -138,13 +145,9 @@ searchForm.addEventListener('submit', async e => {
         <h4><b>Antirequisites:</b></h4>
         <p>${flowData.relCourseArr[2]}</p>
         <h4><b>Leads to:</b></h4>
-        <p>${flowData.relCourseArr[3]}</p>
+        <p>${postReqs}</p>
     </div>
     `;
-
-    if (flowData.likedPerc === 'N/A') flowData.likedPerc = '0%';
-    if (flowData.easyPerc === 'N/A') flowData.easyPerc = '0%';
-    if (flowData.usefulPerc === 'N/A') flowData.usefulPerc = '0%';
 
     document.getElementById('container-rb').innerHTML = `
     <div id="stat" class="card card-body border-0 text-center mb-2 shadow-lg">
@@ -190,7 +193,7 @@ searchForm.addEventListener('submit', async e => {
         <h4><b>Recent Course Reviews:</b></h4>
         <br>`;
     
-    if (flowData.reviewArr.length === 0) {
+    if (flowData.reviewInfo.reviewData.length === 0) {
         outputFlow += `
         <div class="d-flex justify-content-center align-items-center pb-5">
             <h5>No Reviews Found</h5>
@@ -198,11 +201,11 @@ searchForm.addEventListener('submit', async e => {
         `;
     }
 
-    for (let i = 0; i < flowData.reviewArr.length; i++) {
+    for (let i = 0; i < flowData.reviewInfo.reviewData.length; i++) {
         outputFlow += `
         <div class="card card-body review-card border-0 w-auto mb-4 shadow-lg">
-            <p>${flowData.reviewArr[i]}</p>
-            <b><i class="review-info">${flowData.postInfoArr[i]}</i></b>
+            <p>${flowData.reviewInfo.reviewData[i].courseComment}</p>
+            <b><i class="review-info">${flowData.reviewInfo.reviewData[i].postInfo}</i></b>
         </div>`;
     }
 
