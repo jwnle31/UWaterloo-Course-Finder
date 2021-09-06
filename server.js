@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const reddit = require('./api/reddit');
 const uwflow = require('./api/uwflow');
-const dbupdate = require('./dbupdate');
+// const dbupdate = require('./dbupdate');
 require('dotenv').config();
 
 // Connect to database
