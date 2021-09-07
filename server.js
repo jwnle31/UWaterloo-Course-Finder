@@ -31,15 +31,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(redirectSSL);
 
-// Redirect to https
-app.use((req, res, next) => {
-    if (req.header('x-forwarded-proto') !== 'https') {
-        res.redirect(`https://${req.header('host')}${req.url}`);
-    } else {
-        next();
-    }
-});
-
 // Homepage Route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
