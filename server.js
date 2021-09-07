@@ -127,11 +127,9 @@ app.put('/uwflow/:course', (req, res) => {
             return uwflowData.findOne({ courseCode: req.params.course });
         })
         .then(data => {
-            console.log(data);
             return uwflow.reviewDataUpdate(data.courseId);
         })
         .then(data => {
-            console.log(data);
             res.status(201).json({
                 message: 'Successfully updated UW Flow data!',
                 result: data
