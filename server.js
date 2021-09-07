@@ -90,7 +90,7 @@ app.put('/reddit/:subject/:catalogNum', (req, res) => {
         })
         .catch(err => {
             const status = err.status || 500;
-            if (status == 500) err.message = 'Server Error!';
+            if (status == 500) err.message = err.message || 'Server Error!';
             res.status(status).json({
                 status,
                 message: err.message
@@ -127,9 +127,11 @@ app.put('/uwflow/:course', (req, res) => {
             return uwflowData.findOne({ courseCode: req.params.course });
         })
         .then(data => {
+            console.log(data);
             return uwflow.reviewDataUpdate(data.courseId);
         })
         .then(data => {
+            console.log(data);
             res.status(201).json({
                 message: 'Successfully updated UW Flow data!',
                 result: data
@@ -137,7 +139,7 @@ app.put('/uwflow/:course', (req, res) => {
         })
         .catch(err => {
             const status = err.status || 500;
-            if (status == 500) err.message = 'Server Error!';
+            if (status == 500) err.message = err.message || 'Server Error!';
             res.status(status).json({
                 status,
                 message: err.message
