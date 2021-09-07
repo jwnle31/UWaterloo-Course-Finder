@@ -1,5 +1,6 @@
 const express = require('express');
-const path = require('path');
+const path = require('path');]
+const redirectSSL = require('redirect-ssl');
 const reddit = require('./api/reddit');
 const uwflow = require('./api/uwflow');
 require('dotenv').config();
@@ -27,6 +28,8 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(redirectSSL);
 
 // Redirect to https
 app.use((req, res, next) => {
