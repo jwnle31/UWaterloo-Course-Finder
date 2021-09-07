@@ -1,5 +1,5 @@
 const express = require('express');
-const path = require('path');]
+const path = require('path');
 const redirectSSL = require('redirect-ssl');
 const reddit = require('./api/reddit');
 const uwflow = require('./api/uwflow');
